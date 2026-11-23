@@ -1,10 +1,11 @@
 {
-  "name": "empty",
+  "name": "pomodoro-zepp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Pomodoro para Amazfit GTR 4 new (Zepp OS 1.0)",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "zeus build -t gtr4new",
+    "bridge": "zeus bridge"
   },
   "author": "",
   "license": "ISC",
