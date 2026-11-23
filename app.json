@@ -1,0 +1,44 @@
+{
+  "configVersion": "v2",
+  "app": {
+    "appId": 27808,
+    "appName": "Pomodoro",
+    "appType": "app",
+    "version": {
+      "code": 3,
+      "name": "1.0.2"
+    },
+    "icon": "icon.png",
+    "vender": "zepp",
+    "description": "Pomodoro timer"
+  },
+  "permissions": [],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "1.0.0",
+      "target": "1.0.1",
+      "minVersion": "1.0.0"
+    }
+  },
+  "targets": {
+    "gtr4new": {
+      "module": {
+        "page": {
+          "pages": [
+            "page/index"
+          ]
+        }
+      },
+      "platforms": [
+        { "name": "Amazfit GTR 4 new", "deviceSource": 9437441 }
+      ],
+      "designWidth": 480
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "Pomodoro"
+    }
+  },
+  "defaultLanguage": "en-US"
+}
