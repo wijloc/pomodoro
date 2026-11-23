@@ -27,8 +27,8 @@ Marque cada passo como feito antes de seguir. Os comandos de checagem são segur
 Pergunte o modelo (relógio: *Configurações → Sobre*; ou app Zepp: *Perfil → relógio*).
 O app suporta **Amazfit GTR 4 new, modelo A2040** (deviceSource `9437441`, Zepp OS 1.0).
 
-- Outro modelo → explique a seção *Outros relógios* do README antes de seguir; o app atual
-  não vai instalar (erro `Device not supported`).
+- Outro modelo → o app não roda nele (erro `Device not supported`). Explique a seção
+  *Outros relógios* do README e pare, a menos que a pessoa queira portar o app.
 - Na dúvida, siga: o erro na instalação confirma.
 
 ### 2. Node.js
@@ -62,7 +62,23 @@ Guie:
 2. *Perfil → relógio → Developer Mode* → **+** → **Bridge**.
 3. Deixar essa tela aberta, celular desbloqueado, Bluetooth ligado.
 
-### 6. Build (você)
+### 6. appId (só se precisar)
+
+O `appId` 27808 **não pertence a nenhuma conta**: é um número de desenvolvimento que o
+`zeus create` sorteia entre 20000 e 30000. Qualquer pessoa instala com ele; **não peça para
+a pessoa criar conta de desenvolvedor nem app no console** só para instalar.
+
+Pergunte se ela já tem outro app de desenvolvimento instalado no relógio (feito com Zeus).
+Se tiver, ou se ela quiser publicar na loja, troque o número (para publicar, use o que o
+https://console.zepp.com/ gerar; senão, qualquer inteiro entre 20000 e 30000) em
+**dois lugares, com o mesmo valor**:
+
+- `app.json` → `app.appId`
+- `page/index.js` → `const APP_ID` (usado pelo alarme que reabre o app)
+
+Depois suba `version.code`/`version.name` e siga para o build.
+
+### 7. Build (você)
 
 Na raiz do repositório:
 
@@ -73,7 +89,7 @@ npm run build
 Deve terminar sem erro e gerar `dist/*.zab`. Se falhar, leia o erro: normalmente é Zeus
 não instalada ou Node antigo.
 
-### 7. Instalação pelo bridge (pessoa)
+### 8. Instalação pelo bridge (pessoa)
 
 Peça para a pessoa rodar, na pasta do projeto:
 
@@ -84,16 +100,13 @@ zeus bridge
 e no prompt digitar `connect` e depois `install` (escolhendo **Amazfit GTR 4 new** se
 perguntar). Peça para ela colar a saída.
 
-- `successfully connected` + instalação concluída → vá para o passo 8.
+- `successfully connected` + instalação concluída → vá para o passo 9.
 - `Device not supported` → modelo errado (passo 1) ou cache velho: rode
   `rm -rf ~/.zepp/.zeus_device*` e tente de novo.
-- Erro de conta/permissão do app → o `appId` 27808 é da conta do autor. Peça para a pessoa
-  criar um app em https://console.zepp.com/ e informar o novo appId; troque em
-  `app.json` (`app.appId`) **e** em `page/index.js` (`const APP_ID`), suba a versão e
-  rode o build de novo.
+- Sumiu outro app de desenvolvimento do relógio → conflito de `appId` (veja abaixo).
 - `connect` falha → tela Bridge fechada, celular bloqueado ou contas diferentes.
 
-### 8. Teste (pessoa)
+### 9. Teste (pessoa)
 
 Abrir o app **Pomodoro** no relógio → **Iniciar** → **segurar o botão físico de baixo**
 (fase acaba em 15 s) → deve vibrar e mostrar o overlay; tocar nele para.

@@ -1,6 +1,5 @@
 // Pomodoro para Zepp OS — versão API 1.0
 // Amazfit "GTR 4 new" (deviceSource 9437441, tela 480x480, Zepp OS 1.0).
-// A versão API 2.0 (módulos @zos/*) ficou em variants/api2.
 //
 // Como funciona:
 // - O estado (fase, horário de fim, ciclos) fica salvo com hmFS.SysProSetChars, então o
@@ -20,7 +19,7 @@ const LABEL = { focus: 'FOCO', short: 'PAUSA', long: 'PAUSA LONGA' }
 const COLOR = { focus: 0x0a84ff, short: 0x34c759, long: 0x8e8e93 }
 const KEY = 'pomodoro_state'
 
-const APP_ID = 27808 // mesmo appId do app.json
+const APP_ID = 27808 // TEM que ser igual a app.appId do app.json (usado pelo alarme)
 const VIBE_SCENE = 5 // vibração longa e contínua, igual ao alarme/contagem do relógio
 const VIBE_MS = 6000 // quanto tempo vibra no fim da fase (tocar no overlay para antes)
 const TEST_MS = 15000 // atalho de teste (segurar o botão físico de baixo)

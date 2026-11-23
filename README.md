@@ -45,8 +45,8 @@ Este app foi feito para o **Amazfit GTR 4 new** (modelo **A2040**). Confira no r
 *Configurações → Sobre* ou no app Zepp (*Perfil → seu relógio*).
 
 - É o GTR 4 new / A2040 → siga em frente.
-- É outro modelo (GTR 4 comum, GTR 4 Limited Edition, Zepp OS 2+) → veja
-  [Outros relógios](#outros-relógios) antes de continuar.
+- É outro modelo (GTR 4 comum, GTR 4 Limited Edition, Zepp OS 2+) → este app não roda
+  nele; veja [Outros relógios](#outros-relógios).
 
 ### 2. Instale o Node.js
 
@@ -106,6 +106,24 @@ npm run build
 
 O pacote sai em `dist/`. Se o build funcionar, o projeto está pronto para instalar.
 
+#### Sobre o `appId` (não precisa trocar para instalar)
+
+O `appId` 27808 do `app.json` **não é de nenhuma conta**: é um número de desenvolvimento,
+sorteado pelo `zeus create` (que sempre gera um valor aleatório entre 20000 e 30000). Por
+isso qualquer pessoa consegue instalar o app pelo bridge com ele, sem cadastro.
+
+Troque o `appId` só se:
+- **você já tiver outro app de desenvolvimento com o mesmo número no relógio** (a instalação
+  substituiria esse app); ou
+- **for publicar na loja da Zepp**: aí o número precisa ser o que o
+  [console.zepp.com](https://console.zepp.com/) gerar para o seu app.
+
+Para trocar, mude **os dois lugares** com o mesmo número (o alarme usa o segundo):
+- `app.json` → `app.appId`
+- `page/index.js` → `const APP_ID`
+
+e rode `npm run build` de novo.
+
 ### 7. Instale no relógio pelo bridge
 
 Dentro da pasta do projeto:
@@ -139,16 +157,21 @@ o relógio vibra e mostra o overlay. Toque no overlay para parar.
 |---|---|
 | `Install result: stage=failed ... Device not supported` | O relógio não é o GTR 4 new (deviceSource `9437441`). Confira o modelo (passo 1) e veja [Outros relógios](#outros-relógios). Se o modelo estiver certo, limpe o cache de aparelhos: `rm -rf ~/.zepp/.zeus_device*` (não apague `~/.zepp/.zeus`, que guarda seu login). |
 | `connect` não acha o celular | Tela *Developer Mode → Bridge* fechada, celular bloqueado ou contas diferentes entre `zeus login` e o app Zepp. |
-| Instalação falha por conta/permissão do app | O `appId` (27808) pertence à conta de quem criou o projeto. Crie um app em [console.zepp.com](https://console.zepp.com/), pegue o novo appId e troque em **dois lugares**: `app.json` (`app.appId`) e `page/index.js` (`APP_ID`). |
+| Instalou, mas sumiu outro app de desenvolvimento do relógio | Os dois tinham o mesmo `appId`. Troque o deste projeto (veja [Sobre o `appId`](#sobre-o-appid-não-precisa-trocar-para-instalar)). |
+| O app funciona, mas não reabre sozinho no fim da fase | `APP_ID` em `page/index.js` diferente de `app.appId` no `app.json`. Deixe os dois iguais e reinstale. |
+| `appId is invalid` no build | O `appId` precisa ser um número maior que 10000. |
 | O app abre mas não reage | Veja o log no terminal do `zeus bridge` (as mensagens começam com `[pomodoro]`). |
 
 ## Outros relógios
 
-O código em `page/` usa a **API 1.0** (globais `hmUI`, `hmApp`, `hmSensor`…), que só roda
-no GTR 4 new e em outros aparelhos Zepp OS 1.0 com tela 480×480. Para relógios com
-Zepp OS 2 ou 3 (como o GTR 4 e o GTR 4 Limited Edition, 466×466) existe uma versão anterior
-em `variants/api2/` usando os módulos `@zos/*`; ela não tem os recursos mais novos (overlay,
-maçãs, alarme) e precisa de ajustes.
+Este projeto só suporta o **Amazfit GTR 4 new** (Zepp OS 1.0, tela 480×480, deviceSource
+`9437441`). O código usa a **API 1.0** (globais `hmUI`, `hmApp`, `hmSensor`…). Em outros
+modelos a instalação falha com `Device not supported`.
+
+Para tentar outro aparelho Zepp OS 1.0 de tela redonda 480×480 (ex.: GTR 3 Pro), basta
+adicionar o deviceSource dele em `targets.gtr4new.platforms` no `app.json`. Relógios com
+Zepp OS 2 ou 3 (como o GTR 4 e o GTR 4 Limited Edition, 466×466) precisam de um port para os
+módulos `@zos/*`.
 
 Para descobrir o deviceSource de um modelo, depois de rodar a Zeus uma vez:
 
@@ -163,7 +186,7 @@ grep -o '"deviceSource":[0-9]*,"productName":"[^"]*"' ~/.zepp/.zeus_devices
 - `assets/gtr4new/` — ícone do app (`icon.png`, maçã com relógio) e as imagens da maçã
   (`apple.png`) e da bolinha (`dot.png`)
 - `tools/make-icons.py` — gera os PNGs acima (Python 3, sem dependências)
-- `variants/api2/` — versão antiga para API 2.0 (módulos `@zos/*`)
+- `app.js` — entrada do app (exigida pelo Zepp OS)
 - `AGENTS.md` — roteiro para agentes de IA configurarem e instalarem tudo
 
 ## Desenvolvimento
