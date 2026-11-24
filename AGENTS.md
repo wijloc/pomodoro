@@ -62,16 +62,18 @@ Guie:
 2. *Perfil → relógio → Developer Mode* → **+** → **Bridge**.
 3. Deixar essa tela aberta, celular desbloqueado, Bluetooth ligado.
 
-### 6. appId (só se precisar)
+### 6. appId (troque, salvo se a pessoa for o autor)
 
-O `appId` 27808 **não pertence a nenhuma conta**: é um número de desenvolvimento que o
-`zeus create` sorteia entre 20000 e 30000. Qualquer pessoa instala com ele; **não peça para
-a pessoa criar conta de desenvolvedor nem app no console** só para instalar.
+O `appId` do repositório, **1137996**, é o do app publicado na loja da Zepp, cadastrado na
+conta do autor. Para outra pessoa, **troque antes do build**:
 
-Pergunte se ela já tem outro app de desenvolvimento instalado no relógio (feito com Zeus).
-Se tiver, ou se ela quiser publicar na loja, troque o número (para publicar, use o que o
-https://console.zepp.com/ gerar; senão, qualquer inteiro entre 20000 e 30000) em
-**dois lugares, com o mesmo valor**:
+- Só instalar pelo bridge (o caso normal): sorteie um inteiro entre 20000 e 30000 (faixa de
+  desenvolvimento do `zeus create`). **Não peça** para a pessoa criar conta de desenvolvedor
+  nem app no console só para instalar.
+- Ela quer publicar a própria versão na loja: ela cria o app em https://console.zepp.com/ e
+  te passa o appId gerado.
+
+Troque em **dois lugares, com o mesmo valor**:
 
 - `app.json` → `app.appId`
 - `page/index.js` → `const APP_ID` (usado pelo alarme que reabre o app)
@@ -103,12 +105,13 @@ perguntar). Peça para ela colar a saída.
 - `successfully connected` + instalação concluída → vá para o passo 9.
 - `Device not supported` → modelo errado (passo 1) ou cache velho: rode
   `rm -rf ~/.zepp/.zeus_device*` e tente de novo.
-- Sumiu outro app de desenvolvimento do relógio → conflito de `appId` (veja abaixo).
+- Sumiu outro app do relógio ou instalação recusada por conta/permissão → conflito de
+  `appId` ou uso do appId do autor: volte ao passo 6.
 - `connect` falha → tela Bridge fechada, celular bloqueado ou contas diferentes.
 
 ### 9. Teste (pessoa)
 
-Abrir o app **Pomodoro** no relógio → **Iniciar** → **segurar o botão físico de baixo**
+Abrir o app **Pomodoro** no relógio → **Start** (ou **Iniciar** em português) → **segurar o botão físico de baixo**
 (fase acaba em 15 s) → deve vibrar e mostrar o overlay; tocar nele para.
 
 Se algo não funcionar, peça a saída do terminal do `zeus bridge` (linhas `[pomodoro] ...`).
@@ -120,3 +123,5 @@ Se algo não funcionar, peça a saída do terminal do `zeus bridge` (linhas `[po
 - Não use o `this` do `Page` para estado (chega `null` em callbacks); use o objeto `P`.
 - Layout: tudo dentro do círculo interno do anel (centro 240,240, raio ~200).
 - `zeus build -t gtr4new` é o mesmo que `npm run build`.
+- Textos da interface vêm de `page/i18n/*.po` via `gettext` (en-US padrão, pt-BR, pt-PT).
+- Material da loja em `store/`; capturas geradas por `bash tools/make-screenshots.sh`.

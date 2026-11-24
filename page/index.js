@@ -11,15 +11,19 @@
 // Regra de layout: nada pode sobrepor o anel de progresso. Todo widget fica dentro do
 // círculo interno do anel (centro 240,240, raio útil ~200).
 
+import { gettext } from 'i18n'
+
+// Textos em page/i18n/*.po: en-US é o padrão; pt-BR/pt-PT quando o relógio está em português.
+
 // ---------- Configuração ----------
 const MIN = 60 * 1000
 const DURATION = { focus: 25 * MIN, short: 5 * MIN, long: 15 * MIN }
 const LONG_EVERY = 4 // pausa longa a cada 4 focos
-const LABEL = { focus: 'FOCO', short: 'PAUSA', long: 'PAUSA LONGA' }
+const LABEL = { focus: gettext('focus'), short: gettext('short'), long: gettext('long') }
 const COLOR = { focus: 0x0a84ff, short: 0x34c759, long: 0x8e8e93 }
 const KEY = 'pomodoro_state'
 
-const APP_ID = 27808 // TEM que ser igual a app.appId do app.json (usado pelo alarme)
+const APP_ID = 1137996 // TEM que ser igual a app.appId do app.json (usado pelo alarme)
 const VIBE_SCENE = 5 // vibração longa e contínua, igual ao alarme/contagem do relógio
 const VIBE_MS = 6000 // quanto tempo vibra no fim da fase (tocar no overlay para antes)
 const TEST_MS = 15000 // atalho de teste (segurar o botão físico de baixo)
@@ -69,7 +73,7 @@ const APPLE = { size: 40, gap: 12, y: 248 }
 const MAIN_BTN = {
   x: 150, y: 300, w: 180, h: 60, radius: 30,
   normal_color: 0x333333, press_color: 0x555555,
-  text: 'Iniciar', text_size: 32, color: 0xffffff,
+  text: gettext('start'), text_size: 32, color: 0xffffff,
 }
 const SMALL_BTN = {
   y: 368, w: 100, h: 42, radius: 21,
@@ -158,12 +162,12 @@ const P = {
     this.mainText = MAIN_BTN.text
 
     hmUI.createWidget(hmUI.widget.BUTTON, Object.assign({}, SMALL_BTN, {
-      x: 134, text: 'Zerar',
+      x: 134, text: gettext('reset'),
       click_func: () => safe('reset', () => this.reset()),
     }))
 
     hmUI.createWidget(hmUI.widget.BUTTON, Object.assign({}, SMALL_BTN, {
-      x: 246, text: 'Pular',
+      x: 246, text: gettext('skip'),
       click_func: () => safe('skip', () => this.skip()),
     }))
 
@@ -171,7 +175,7 @@ const P = {
     this.w.overlay = hmUI.createWidget(hmUI.widget.BUTTON, {
       x: 0, y: 0, w: 480, h: 480, radius: 240,
       normal_color: COLOR.focus, press_color: 0x000000,
-      text: 'Toque para parar', text_size: 36, color: 0xffffff,
+      text: gettext('tapToStop'), text_size: 36, color: 0xffffff,
       click_func: () => safe('overlay', () => this.stopVibration()),
     })
     this.setOverlay(false)
@@ -185,7 +189,7 @@ const P = {
         o.setProperty(hmUI.prop.MORE, {
           x: 0, y: 0, w: 480, h: 480, radius: 240,
           normal_color: color, press_color: 0x000000,
-          text: 'Toque para parar', text_size: 36, color: 0xffffff,
+          text: gettext('tapToStop'), text_size: 36, color: 0xffffff,
         })
       )
     }
@@ -256,7 +260,7 @@ const P = {
       }
     }
 
-    const btn = s.running ? 'Pausar' : left < total ? 'Retomar' : 'Iniciar'
+    const btn = s.running ? gettext('pause') : left < total ? gettext('resume') : gettext('start')
     if (btn !== this.mainText) {
       this.mainText = btn
       safe('btn', () => {

@@ -33,6 +33,8 @@ hardware do GTR 3 Pro, Zepp OS 1.0 / API 1.0).
 - A tela fica acesa enquanto o timer roda
 - Layout: nada sobrepõe o anel de progresso; todos os elementos ficam dentro do círculo
 - Erros vão só para o log (`console.log`, visível no `zeus bridge`), nunca para a tela
+- Idioma segue o do relógio: inglês por padrão e português (pt-BR/pt-PT) quando o relógio
+  estiver em português
 
 ## Setup completo (do zero até o app no relógio)
 
@@ -106,19 +108,18 @@ npm run build
 
 O pacote sai em `dist/`. Se o build funcionar, o projeto está pronto para instalar.
 
-#### Sobre o `appId` (não precisa trocar para instalar)
+#### Sobre o `appId` (troque se você não é o autor)
 
-O `appId` 27808 do `app.json` **não é de nenhuma conta**: é um número de desenvolvimento,
-sorteado pelo `zeus create` (que sempre gera um valor aleatório entre 20000 e 30000). Por
-isso qualquer pessoa consegue instalar o app pelo bridge com ele, sem cadastro.
+O `appId` do repositório, **1137996**, é o do app **publicado na loja da Zepp**, cadastrado
+na conta do autor no [console.zepp.com](https://console.zepp.com/). Se você clonou o projeto
+para instalar no **seu** relógio, troque por um número seu antes do build:
 
-Troque o `appId` só se:
-- **você já tiver outro app de desenvolvimento com o mesmo número no relógio** (a instalação
-  substituiria esse app); ou
-- **for publicar na loja da Zepp**: aí o número precisa ser o que o
-  [console.zepp.com](https://console.zepp.com/) gerar para o seu app.
+- **Só instalar pelo bridge:** use qualquer inteiro entre 20000 e 30000 (é a faixa que o
+  `zeus create` sorteia para apps de desenvolvimento; não precisa de cadastro).
+- **Publicar a sua própria versão na loja:** crie o app no console e use o appId que ele gerar.
 
-Para trocar, mude **os dois lugares** com o mesmo número (o alarme usa o segundo):
+Assim seu app não se confunde com a versão da loja nem com outro app de desenvolvimento
+seu. Mude **os dois lugares** com o mesmo número (o alarme usa o segundo):
 - `app.json` → `app.appId`
 - `page/index.js` → `const APP_ID`
 
@@ -148,7 +149,7 @@ O app aparece na lista de apps do relógio como **Pomodoro**.
 
 ### 8. Teste rápido
 
-Abra o app, toque em **Iniciar** e **segure o botão físico de baixo**: a fase acaba em 15 s,
+Abra o app, toque em **Start** (ou **Iniciar**, com o relógio em português) e **segure o botão físico de baixo**: a fase acaba em 15 s,
 o relógio vibra e mostra o overlay. Toque no overlay para parar.
 
 ## Problemas comuns
@@ -157,7 +158,8 @@ o relógio vibra e mostra o overlay. Toque no overlay para parar.
 |---|---|
 | `Install result: stage=failed ... Device not supported` | O relógio não é o GTR 4 new (deviceSource `9437441`). Confira o modelo (passo 1) e veja [Outros relógios](#outros-relógios). Se o modelo estiver certo, limpe o cache de aparelhos: `rm -rf ~/.zepp/.zeus_device*` (não apague `~/.zepp/.zeus`, que guarda seu login). |
 | `connect` não acha o celular | Tela *Developer Mode → Bridge* fechada, celular bloqueado ou contas diferentes entre `zeus login` e o app Zepp. |
-| Instalou, mas sumiu outro app de desenvolvimento do relógio | Os dois tinham o mesmo `appId`. Troque o deste projeto (veja [Sobre o `appId`](#sobre-o-appid-não-precisa-trocar-para-instalar)). |
+| Instalou, mas sumiu outro app de desenvolvimento do relógio (ou a versão da loja) | Os dois tinham o mesmo `appId`. Troque o deste projeto (veja [Sobre o `appId`](#sobre-o-appid-troque-se-você-não-é-o-autor)). |
+| Instalação recusada por conta/permissão | Você está usando o `appId` 1137996, que é da conta do autor. Troque por um seu (mesma seção acima). |
 | O app funciona, mas não reabre sozinho no fim da fase | `APP_ID` em `page/index.js` diferente de `app.appId` no `app.json`. Deixe os dois iguais e reinstale. |
 | `appId is invalid` no build | O `appId` precisa ser um número maior que 10000. |
 | O app abre mas não reage | Veja o log no terminal do `zeus bridge` (as mensagens começam com `[pomodoro]`). |
@@ -185,13 +187,20 @@ grep -o '"deviceSource":[0-9]*,"productName":"[^"]*"' ~/.zepp/.zeus_devices
 - `page/index.js` — a página do pomodoro (UI, timer, alarme, vibração)
 - `assets/gtr4new/` — ícone do app (`icon.png`, maçã com relógio) e as imagens da maçã
   (`apple.png`) e da bolinha (`dot.png`)
-- `tools/make-icons.py` — gera os PNGs acima (Python 3, sem dependências)
+- `page/i18n/` — textos da interface: `en-US.po` (padrão), `pt-BR.po` e `pt-PT.po`
+- `tools/make-icons.py` — gera os PNGs acima e o ícone da loja (Python 3, sem dependências)
+- `tools/screenshot.html` + `tools/make-screenshots.sh` — geram as capturas da loja
+  (360×360, fundo transparente, em inglês) com o Chrome headless
+- `store/` — material da loja: `icon-240.png` e `screenshots/`
 - `app.js` — entrada do app (exigida pelo Zepp OS)
 - `AGENTS.md` — roteiro para agentes de IA configurarem e instalarem tudo
 
 ## Desenvolvimento
 
 - `npm run build` gera o pacote; `npm run bridge` abre o bridge.
+- Textos novos na interface: use `gettext('chave')` e adicione a chave nos três `.po`.
+- Mudou o layout ou as cores? Ajuste também `tools/screenshot.html` e rode
+  `bash tools/make-screenshots.sh` para atualizar as capturas da loja.
 - A cada alteração no app, suba `version.code` e `version.name` no `app.json`.
 - Regra de layout: nada pode sobrepor o anel de progresso (tudo dentro de ~200 px do centro).
 - Na API 1.0 o `this` do `Page` não é confiável; o estado fica no objeto `P` do módulo.

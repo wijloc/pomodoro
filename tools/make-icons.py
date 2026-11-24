@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Gera os PNGs do app em assets/gtr4new/ (sem dependências, só Python 3).
 
-- icon.png  (248x248): ícone do app, uma maçã com um relógio no meio
+- icon.png  (248x248): ícone do app, uma maçã com um relógio no meio dentro de um círculo
+- store/icon-240.png (240x240): o mesmo ícone no tamanho pedido pela loja da Zepp
 - apple.png (40x40):   maçã de foco concluído
 - dot.png   (40x40):   bolinha de foco pendente
 
@@ -96,7 +97,18 @@ def apple(u, v):
     return p
 
 
+BG = (245, 245, 247, 255)
+
+
 def icon(u, v):
+    # a loja exige ícone circular, transparente fora do círculo
+    if math.hypot(u - 0.5, v - 0.5) > 0.5:
+        return None
+    p = apple_clock((u - 0.13) / 0.74, (v - 0.12) / 0.74)
+    return p or BG
+
+
+def apple_clock(u, v):
     # mesma maçã, um pouco menor e centralizada, com um relógio no meio
     s, ox, oy = 0.92, 0.04, 0.02
     p = apple_parts((u - ox) / s, (v - oy) / s)
@@ -134,6 +146,9 @@ def dot(u, v):
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     write_png(os.path.join(OUT, 'icon.png'), render(248, icon, ss=3))
+    store = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'store')
+    os.makedirs(store, exist_ok=True)
+    write_png(os.path.join(store, 'icon-240.png'), render(240, icon, ss=3))
     write_png(os.path.join(OUT, 'apple.png'), render(40, apple))
     write_png(os.path.join(OUT, 'dot.png'), render(40, dot))
     print('ícones gerados em', os.path.normpath(OUT))

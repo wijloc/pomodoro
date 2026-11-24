@@ -1,0 +1,27 @@
+msgid "focus"
+msgstr "FOCUS"
+
+msgid "short"
+msgstr "BREAK"
+
+msgid "long"
+msgstr "LONG BREAK"
+
+msgid "start"
+msgstr "Start"
+
+msgid "pause"
+msgstr "Pause"
+
+msgid "resume"
+msgstr "Resume"
+
+msgid "reset"
+msgstr "Reset"
+
+msgid "skip"
+msgstr "Skip"
+
+msgid "tapToStop"
+msgstr "Tap to stop"
+

@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+  Réplica da tela do app para gerar as capturas da loja (tools/make-screenshots.sh).
+  Usa as mesmas posições, cores e imagens de page/index.js (design em 480px),
+  reduzida para 360x360 com fundo transparente fora do círculo.
+  Parâmetros: ?phase=focus|short|long&time=MM:SS&frac=0..1&done=N&btn=Start|Pause|Resume&overlay=1
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  #screen {
+    position: absolute; left: 0; top: 0; width: 480px; height: 480px;
+    transform: scale(0.75); transform-origin: 0 0;
+    border-radius: 50%; background: #000; overflow: hidden;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  .abs { position: absolute; display: flex; align-items: center; justify-content: center; }
+  .btn { color: #fff; }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<script>
+  const q = new URLSearchParams(location.search)
+  const COLOR = { focus: '#0a84ff', short: '#34c759', long: '#8e8e93' }
+  const LABEL = { focus: 'FOCUS', short: 'BREAK', long: 'LONG BREAK' }
+  const phase = q.get('phase') || 'focus'
+  const frac = parseFloat(q.get('frac') || '1')
+  const done = parseInt(q.get('done') || '0', 10)
+  const color = COLOR[phase]
+  const s = document.getElementById('screen')
+
+  // anel: ARC x16 y16 w448 h448 line_width 16 -> raio do traço 216
+  const r = 216, c = 2 * Math.PI * r
+  s.innerHTML += `<svg class="abs" style="left:0;top:0" width="480" height="480">
+    <circle cx="240" cy="240" r="${r}" fill="none" stroke="#222" stroke-width="16"/>
+    <circle cx="240" cy="240" r="${r}" fill="none" stroke="${color}" stroke-width="16"
+      stroke-linecap="round" stroke-dasharray="${c * frac} ${c}"
+      transform="rotate(-90 240 240)"/>
+  </svg>`
+
+  const box = (x, y, w, h, css, html) =>
+    `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${css}">${html}</div>`
+
+  s.innerHTML += box(110, 100, 260, 40, `color:${color};font-size:30px`, LABEL[phase])
+  s.innerHTML += box(70, 142, 340, 100, 'color:#fff;font-size:88px;font-variant-numeric:tabular-nums', q.get('time') || '25:00')
+
+  // maçãs: 4 x 40px, gap 12, centradas, y 248
+  let filled = done % 4
+  if (phase === 'long' && done > 0 && filled === 0) filled = 4
+  for (let i = 0; i < 4; i++) {
+    const src = i < filled ? '../assets/gtr4new/apple.png' : '../assets/gtr4new/dot.png'
+    s.innerHTML += `<img class="abs" style="left:${142 + i * 52}px;top:248px;width:40px;height:40px" src="${src}">`
+  }
+
+  s.innerHTML += box(150, 300, 180, 60, 'background:#333;border-radius:30px;font-size:32px;color:#fff', q.get('btn') || 'Start')
+  s.innerHTML += box(134, 368, 100, 42, 'background:#1c1c1c;border-radius:21px;font-size:24px;color:#ccc', 'Reset')
+  s.innerHTML += box(246, 368, 100, 42, 'background:#1c1c1c;border-radius:21px;font-size:24px;color:#ccc', 'Skip')
+
+  if (q.get('overlay')) {
+    s.innerHTML += box(0, 0, 480, 480, `background:${color};border-radius:50%;font-size:36px;color:#fff`, 'Tap to stop')
+  }
+</script>
+</body>
+</html>

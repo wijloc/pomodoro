@@ -1,12 +1,12 @@
 {
   "configVersion": "v2",
   "app": {
-    "appId": 27808,
+    "appId": 1137996,
     "appName": "Pomodoro",
     "appType": "app",
     "version": {
-      "code": 7,
-      "name": "1.0.6"
+      "code": 9,
+      "name": "1.0.8"
     },
     "icon": "icon.png",
     "vender": "zepp",
@@ -37,6 +37,12 @@
   },
   "i18n": {
     "en-US": {
+      "appName": "Pomodoro"
+    },
+    "pt-BR": {
+      "appName": "Pomodoro"
+    },
+    "pt-PT": {
       "appName": "Pomodoro"
     }
   },
